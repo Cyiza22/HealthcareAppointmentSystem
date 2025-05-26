@@ -14,6 +14,7 @@ import java.util.List;
 public class UserController {
     private final UserServices userService;
 
+
     @GetMapping
     @Operation( summary = "this endpoint returns all users")
     public List<User> getAllUsers() {
