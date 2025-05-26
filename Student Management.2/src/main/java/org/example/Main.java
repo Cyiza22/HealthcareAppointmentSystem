@@ -42,7 +42,7 @@ public class Main {
                     System.out.print("Date of Birth (yyyy-mm-dd): ");
                     LocalDate dob = LocalDate.parse(scanner.nextLine());
 
-                    Students student = new Students(0, fn, ln, email, dob);
+                    Students student = new Students(0, fn, ln, email, String DateofB );
                     studentRepository.create(student);
                     System.out.println("Student added.");
                     break;
