@@ -1,6 +1,6 @@
 package org.example.hospital_management_system.config;
 
-import com.example.user.UserService;
+import org.example.hospital_management_system.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {

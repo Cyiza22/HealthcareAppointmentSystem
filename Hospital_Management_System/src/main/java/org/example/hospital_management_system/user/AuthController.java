@@ -1,9 +1,8 @@
 package org.example.hospital_management_system.user;
 
-
-import com.example.config.JwtUtil;
-import com.example.dto.LoginRequest;
-import com.example.dto.RegisterRequest;
+import org.example.hospital_management_system.config.JwtUtil;
+import org.example.hospital_management_system.dto.LoginRequest;
+import org.example.hospital_management_system.dto.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
