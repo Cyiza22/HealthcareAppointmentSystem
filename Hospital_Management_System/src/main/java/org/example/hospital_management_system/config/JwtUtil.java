@@ -2,11 +2,13 @@ package org.example.hospital_management_system.config;
 
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+import org.example.hospital_management_system.user.User;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.cglib.core.internal.Function;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 
@@ -15,42 +17,66 @@ import java.util.Date;
 public class JwtUtil {
 
     @Value("${jwt.secret}")
-    private String secret;
+    private Key secret;
 
     @Value("${jwt.expiration}")
     private Long EXPIRATION;
 
 
-    public String generateToken(String username) {
+    public String generateToken(UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        User user = (User) userDetails;
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .subject(username)
+                .claim("full_name", user.getFullName())
+                .claim("email", user.getEmail())
+                .issuedAt(new Date())
+                .expiration(new Date( System.currentTimeMillis()+ getExpirationTime()))
+                .signWith(getKey())
                 .compact();
     }
-    private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
-    }
 
-    public String extractUsername(String token) {
-//        return Jwts.parser()
-//        .setSigningKey(secret)
-//        .parseClaimsJws(token).getBody().getSubject();
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+    // Used to get All Claims from  a Token
+    public Claims getClaims (String token) {
+        return Jwts.parser()
+                .verifyWith((SecretKey) getKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
+
+    // Extracting a single claim from the token
+    public <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    // This method extracts the username from token using getClaim method
+    public String getUsername(String token) {
+        return getClaim(token, Claims::getSubject);
+    }
+
+    // This method extracts the expirationTime from token using getClaim method
+    public Date getExpirationTime(String token) {
+        return getClaim(token, Claims::getExpiration);
+    }
+
+
+    public Key getKey() {
+        return secret;
+    }
+
+    public Long getExpirationTime() {
+        return EXPIRATION;
+    }
+
+    public boolean isTokenExpired(String token) {
+        return getExpirationTime(token).before(new Date());
+    }
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = getUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 }
