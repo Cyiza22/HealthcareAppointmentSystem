@@ -1,82 +1,72 @@
 package org.example.hospital_management_system.config;
 
-
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.example.hospital_management_system.user.User;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.internal.Function;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.function.Function;
 
+import static io.jsonwebtoken.Jwts.*;
 
 @Service
 public class JwtUtil {
 
     @Value("${jwt.secret}")
-    private Key secret;
+    private String jwtSecret;
 
     @Value("${jwt.expiration}")
-    private Long EXPIRATION;
+    private Long expirationMillis;
 
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    }
 
-    public String generateToken(UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        User user = (User) userDetails;
-        return Jwts.builder()
-                .subject(username)
+    public String generateToken(User user) {
+        return builder()
+                .setSubject(user.getEmail()) // ✅ email is username
                 .claim("full_name", user.getFullName())
                 .claim("email", user.getEmail())
-                .issuedAt(new Date())
-                .expiration(new Date( System.currentTimeMillis()+ getExpirationTime()))
-                .signWith(getKey())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    // Used to get All Claims from  a Token
-    public Claims getClaims (String token) {
-        return Jwts.parser()
-                .verifyWith((SecretKey) getKey())
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
                 .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .parseClaimsJws(token)
+                .getBody();
     }
 
 
-    // Extracting a single claim from the token
     public <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    // This method extracts the username from token using getClaim method
     public String getUsername(String token) {
         return getClaim(token, Claims::getSubject);
     }
 
-    // This method extracts the expirationTime from token using getClaim method
-    public Date getExpirationTime(String token) {
+    public Date getExpiration(String token) {
         return getClaim(token, Claims::getExpiration);
     }
 
 
-    public Key getKey() {
-        return secret;
-    }
-
-    public Long getExpirationTime() {
-        return EXPIRATION;
-    }
-
     public boolean isTokenExpired(String token) {
-        return getExpirationTime(token).before(new Date());
+        return getExpiration(token).before(new Date());
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+
+    public boolean isTokenValid(String token, org.springframework.security.core.userdetails.UserDetails userDetails) {
         final String username = getUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }

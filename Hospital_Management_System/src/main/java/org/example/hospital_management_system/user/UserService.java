@@ -1,10 +1,11 @@
 package org.example.hospital_management_system.user;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -20,17 +21,24 @@ public class UserService implements UserDetailsService {
         return repo.save(user);
     }
 
-    public boolean checkCredentials(String username, String rawPassword) {
-        return repo.findByUsername(username)
+    public boolean checkCredentials(String email, String rawPassword) {
+        return repo.findByEmail(email)
                 .map(user -> encoder.matches(rawPassword, user.getPassword()))
                 .orElse(false);
     }
 
+    public User getByEmail(String email) {
+        return repo.findByEmail(email).orElse(null);
+    }
+
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = repo.findByUsername(username)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = repo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new java.util.ArrayList<>());
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                new java.util.ArrayList<>()
+        );
     }
 }
-
