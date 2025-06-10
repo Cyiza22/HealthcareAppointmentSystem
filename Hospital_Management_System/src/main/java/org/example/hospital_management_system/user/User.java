@@ -17,11 +17,6 @@ public class User {
     private String username;
     private String password;
 
-    public Object getFullName() {
-
-    }
-
-    public Object getEmail() {
-    }
+    
 }
 
