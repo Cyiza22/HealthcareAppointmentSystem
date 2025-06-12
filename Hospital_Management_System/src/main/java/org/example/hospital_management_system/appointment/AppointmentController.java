@@ -16,7 +16,7 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
-    @PostMapping
+    @PostMapping("/new")
     public ResponseEntity<Appointment> create(@Valid @RequestBody AppointmentDTO dto) {
         return ResponseEntity.ok(appointmentService.create(dto));
     }

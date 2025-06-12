@@ -1,5 +1,6 @@
 package org.example.hospital_management_system.appointment;
 
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class AppointmentDTO {
     private Long doctorId;
 
     @NotNull(message = "Appointment date is required")
+    @Future(message = "appointment must be in future date")
     private LocalDateTime appointmentDate;
 
     @NotBlank(message = "Status is required")

@@ -1,6 +1,13 @@
 package org.example.hospital_management_system.clinic;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 
 public class ClinicDTO {
 

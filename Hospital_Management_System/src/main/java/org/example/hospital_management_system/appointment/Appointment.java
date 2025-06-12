@@ -8,6 +8,8 @@ import org.example.hospital_management_system.patient.Patient;
 import java.time.LocalDateTime;
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Appointment {
 
     @Id

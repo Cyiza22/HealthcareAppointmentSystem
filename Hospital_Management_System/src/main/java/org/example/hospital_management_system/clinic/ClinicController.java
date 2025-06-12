@@ -1,5 +1,6 @@
 package org.example.hospital_management_system.clinic;
 
+import  org.example.hospital_management_system.clinic.ClinicService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,9 +15,9 @@ public class ClinicController {
         this.clinicService = clinicService;
     }
 
-    @PostMapping
-    public Clinic create(@RequestBody Clinic clinic) {
-        return clinicService.createClinic(clinic);
+    @PostMapping("/create")
+    public Clinic create(@RequestBody ClinicDTO dto) {
+        return clinicService.createClinic(dto);
     }
 
     @GetMapping
