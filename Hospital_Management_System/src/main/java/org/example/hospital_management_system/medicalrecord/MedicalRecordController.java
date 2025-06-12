@@ -3,6 +3,7 @@ package org.example.hospital_management_system.medicalrecord;
 import org.example.hospital_management_system.medicalrecord.MedicalRecord;
 import org.example.hospital_management_system.medicalrecord.MedicalRecordDTO;
 import org.example.hospital_management_system.medicalrecord.MedicalRecordService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,13 @@ public class MedicalRecordController {
     @GetMapping("/{id}")
     public ResponseEntity<MedicalRecord> getById(@PathVariable Long id) {
         return ResponseEntity.ok(recordService.getById(id));
+    }
+
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<MedicalRecord> update(@PathVariable Long id, @RequestBody MedicalRecordDTO record) {
+        MedicalRecord records = recordService.updateRecord(id, record);
+
+        return new ResponseEntity<>(records, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

@@ -1,5 +1,6 @@
 package org.example.hospital_management_system.appointment;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,12 @@ public class AppointmentController {
     @GetMapping("/{id}")
     public ResponseEntity<Appointment> getById(@PathVariable Long id) {
         return ResponseEntity.ok(appointmentService.getById(id));
+    }
+
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<Appointment> update(@PathVariable Long id, @RequestBody AppointmentDTO appointment) {
+        Appointment appointment1 = appointmentService.updateAppointment(id, appointment);
+        return new ResponseEntity<>(appointment1, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

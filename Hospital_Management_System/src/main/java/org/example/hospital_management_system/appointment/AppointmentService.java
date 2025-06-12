@@ -3,6 +3,8 @@ package org.example.hospital_management_system.appointment;
 import org.example.hospital_management_system.doctors.DoctorRepository;
 import org.example.hospital_management_system.patient.PatientRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import java.util.List;
 
 @Service
@@ -43,6 +45,14 @@ public class AppointmentService {
     public Appointment getById(Long id) {
         return appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
+    }
+
+    public Appointment updateAppointment(@PathVariable Long id, AppointmentDTO  appointment) {
+        var appoint = appointmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Appointment not found"));
+        appoint.setStatus(appointment.getStatus());
+        appoint.setNotes(appointment.getNotes());
+        appoint.setAppointmentDate(appointment.getAppointmentDate());
+        return appointmentRepository.save(appoint);
     }
 
     public void delete(Long id) {

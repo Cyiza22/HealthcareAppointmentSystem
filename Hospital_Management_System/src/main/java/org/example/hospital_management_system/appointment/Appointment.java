@@ -30,5 +30,12 @@ public class Appointment {
     @Column(nullable = false)
     private String reason;
 
+    @Column(nullable = false)
+    private String notes;
+
+    @Column(nullable = false)
+    private String status;
+
+
 }
 

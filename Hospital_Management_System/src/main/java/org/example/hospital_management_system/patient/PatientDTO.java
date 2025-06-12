@@ -2,7 +2,13 @@ package org.example.hospital_management_system.patient;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
+
+@Setter
+@Getter
 
 public class PatientDTO {
 

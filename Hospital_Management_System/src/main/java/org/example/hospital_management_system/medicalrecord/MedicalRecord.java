@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class MedicalRecord {
 
     @Id
+    @Column(name = "record_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -27,7 +28,8 @@ public class MedicalRecord {
     @Column(nullable = false)
     private String diagnosis;
 
-    @Column(nullable = false)
+
+    @Column(nullable = false, length = 500)
     private String prescription;
 
     @Column(nullable = false)

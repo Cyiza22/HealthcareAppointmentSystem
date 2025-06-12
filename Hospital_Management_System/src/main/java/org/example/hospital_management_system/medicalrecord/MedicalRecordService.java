@@ -51,6 +51,13 @@ public class MedicalRecordService {
                 .orElseThrow(() -> new RuntimeException("Medical record not found"));
     }
 
+    public MedicalRecord updateRecord(Long id, MedicalRecordDTO updatedRecord) {
+        MedicalRecord record = getById(id);
+        record.setDiagnosis(updatedRecord.getDiagnosis());
+        record.setPrescription(updatedRecord.getPrescription());
+        return recordRepository.save(record);
+    }
+
     public void delete(Long id) {
         recordRepository.deleteById(id);
     }
